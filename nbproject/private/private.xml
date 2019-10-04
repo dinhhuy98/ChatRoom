@@ -5,7 +5,11 @@
         <group>
             <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ChatRoom.java</file>
             <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ServerThread.java</file>
+            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/WriteThread.java</file>
             <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ChatServer.java</file>
+            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ClientHandler.java</file>
+            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ReadThread.java</file>
+            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ChatClient.java</file>
         </group>
     </open-files>
 </project-private>

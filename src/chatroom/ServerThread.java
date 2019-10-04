@@ -14,8 +14,10 @@ import java.net.Socket;
  */
 public class ServerThread extends Thread {
     private Socket socket;
-    public ServerThread(Socket socket){
+    private String userName;
+    public ServerThread(Socket socket, String userName){
         this.socket=socket;
+        this.userName=userName;
     }
     public void run(){
         System.out.println(socket.getLocalAddress().getHostName()+" is connected!");

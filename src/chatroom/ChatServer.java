@@ -13,7 +13,7 @@ import java.util.Scanner;
  * @author DELL
  */
 public class ChatServer {
-    public ArrayList<Socket> connectionArray = new ArrayList<Socket>();
+    public ArrayList<ClientHandler> connectionArray = new ArrayList<ClientHandler>();
     public ArrayList<String> currentUsers = new ArrayList<String>();
     
     public static void main(String[] args) {
@@ -27,9 +27,46 @@ public class ChatServer {
             System.out.println("Waitting for client...");
             while(true){
                 Socket socket = server.accept();
-                connectionArray.add(socket);
-                AddUserName(socket);
-                new ServerThread(socket,connectionArray).start();
+              //  connectionArray.add(socket);
+              //  AddUserName(socket);
+               BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+               DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+               DataInputStream in = new DataInputStream(socket.getInputStream());
+               String user = in.readUTF();
+               currentUsers.add(user);
+                System.out.println(user+ "connected");
+                
+                ClientHandler ch = new ClientHandler(socket,connectionArray,user);
+                connectionArray.add(ch);
+                new Thread(ch).start();
+                /*
+               new Thread(()->{
+                        try{
+                            while(true){
+                            String mess = reader.readLine();
+                            out.writeUTF(mess);
+                            }
+                        }catch(IOException e){
+                            e.printStackTrace();
+                   
+                    } 
+                }).start();
+               
+                new Thread(()->{
+                    
+                        try{
+                            while(true){
+                            String respone = in.readUTF();
+                            
+                            System.out.println("[Client]: "+respone);
+                            }
+                        }catch(IOException e){
+                            e.printStackTrace();
+                                }
+                    
+                }).start();
+                
+                */
             }
         }catch(IOException e){
             e.printStackTrace();
@@ -63,5 +100,8 @@ public class ChatServer {
             }
         }
         
+     }
+     public void notify(String message){
+         
      }
 }
