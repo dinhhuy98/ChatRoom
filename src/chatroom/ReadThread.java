@@ -33,7 +33,7 @@ class ReadThread extends Thread{
             try{
                 while(true){
                     String respone = in.readUTF();
-                    if(respone!=null)
+                    if(respone!=null && respone!="#?connection?")
                         System.out.println(respone);
                  
                 }

@@ -36,7 +36,7 @@ public class ChatClient {
     public static void main(String[] args) {
         
        ChatClient client1 = new ChatClient("localhost",1998);
-       client1.setUserName("nnn");
+       client1.setUserName("rrr");
        client1.execute();
     }
     public String getUserName() {
