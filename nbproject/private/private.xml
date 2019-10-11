@@ -3,12 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/B.java</file>
             <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ChatRoom.java</file>
-            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ServerThread.java</file>
-            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ClientHandler.java</file>
             <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ChatServer.java</file>
-            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ReadThread.java</file>
+            <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ChatClientGUI.java</file>
             <file>file:/D:/Documents/Java/ChatRoom/src/chatroom/ChatClient.java</file>
         </group>
     </open-files>
