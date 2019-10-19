@@ -10,7 +10,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,10 +23,12 @@ import java.net.Socket;
 class ReadThread extends Thread{
     private DataInputStream in;
     private Socket socket;
-    private ChatClient client;
-    public ReadThread(Socket socket, ChatClient client) {
+    private String userName;
+    private ObjectInputStream inObject;
+    private ChatClientGUI clientGUI;
+    public ReadThread(Socket socket, ChatClientGUI clientGUI, String userName) {
         this.socket=socket;
-        this.client=client;
+        this.clientGUI=clientGUI;
         try{
             in = new DataInputStream(socket.getInputStream());
         }catch(IOException e){
@@ -31,10 +37,27 @@ class ReadThread extends Thread{
     }
     public void run(){
             try{
+                inObject = new ObjectInputStream(socket.getInputStream());
+                try {
+                    ArrayList<String> userArray =(ArrayList) inObject.readObject();
+                    for(String user:userArray){
+                        clientGUI.getOnlineTA().append(user+"\n");
+                    }
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(ReadThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 while(true){
+                    //clientGUI.getMessageTA().append("kkk");
                     String respone = in.readUTF();
-                    if(respone!=null && respone!="#?connection?")
+                   
+                  //  if(respone.matches("\\[server\\]:\\[\\w{1,}\\]:\\w{1,}")){
+                        
+                  //  }
+                    if(respone!=null && respone!="#?connection?"){
                         System.out.println(respone);
+                        clientGUI.getMessageTA().append(respone+"\n");
+                        
+                    }
                  
                 }
             }catch(IOException e){

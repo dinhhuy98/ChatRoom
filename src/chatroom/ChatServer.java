@@ -14,6 +14,7 @@ import java.util.Scanner;
  */
 public class ChatServer {
     public ArrayList<ClientHandler> connectionArray = new ArrayList<ClientHandler>();
+    public ArrayList<String> userArray = new ArrayList<String>();
    
     
     public static void main(String[] args) {
@@ -30,8 +31,8 @@ public class ChatServer {
                DataInputStream in = new DataInputStream(socket.getInputStream());
                String user = in.readUTF();
                 System.out.println(user+ "connected");
-                
-                ClientHandler ch = new ClientHandler(socket,connectionArray,user);
+                userArray.add(user);
+                ClientHandler ch = new ClientHandler(socket,connectionArray,user,userArray);
                 connectionArray.add(ch);
                 new Thread(ch).start();
                 /*

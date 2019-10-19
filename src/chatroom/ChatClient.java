@@ -21,21 +21,16 @@ public class ChatClient {
         this.hostname = hostname;
         this.port = port;
     }
-    public void execute() throws IOException{
+    public Socket connect() throws IOException{
         
             Socket socket = new Socket(hostname,port);
             System.out.println("Connected to the chat server");
-            new WriteThread(socket, this).start();
-            new ReadThread(socket, this).start();
+         //   new WriteThread(socket, this).start();
+         //   new ReadThread(socket, this).start();
+            return socket;
             
     }
     
-    public static void main(String[] args) throws IOException {
-        
-       ChatClient client1 = new ChatClient("localhost",1998);
-       client1.setUserName("lll");
-       client1.execute();
-    }
     public String getUserName() {
         return userName;
     }

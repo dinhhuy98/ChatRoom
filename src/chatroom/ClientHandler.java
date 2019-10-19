@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -27,11 +28,13 @@ public class ClientHandler implements Runnable {
     private BufferedReader reader ;
     private DataOutputStream out ;
     private DataInputStream in ;
+    public ArrayList<String> userArray = new ArrayList<String>();
 
-    ClientHandler(Socket socket, ArrayList<ClientHandler> connectionArray, String user) throws IOException{
+    ClientHandler(Socket socket, ArrayList<ClientHandler> connectionArray, String user,ArrayList<String> userArray) throws IOException{
         this.socket=socket;
         this.userName=user;
         this.connectionArray=connectionArray;
+        this.userArray=userArray;
         reader = new BufferedReader(new InputStreamReader(System.in));
         out = new DataOutputStream(socket.getOutputStream());
         in = new DataInputStream(socket.getInputStream());
@@ -40,15 +43,17 @@ public class ClientHandler implements Runnable {
     public void run(){
         try{
             //checkConnection();
-            String smg ="["+userName+"]:"+" connected" ;
+            String smg ="[server]:"+"["+userName+"]: connected" ;
             toAll(smg);
-            
+            ObjectOutputStream outObject = new ObjectOutputStream(socket.getOutputStream());
+            outObject.writeObject(userArray);
+          
             while(true){
                // checkConnection();
                 String reponse =in.readUTF();
-                System.out.println("["+userName+"] "+reponse);
+                System.out.println("["+userName+"]: "+reponse);
                 if(reponse!=null)
-                    toAll("["+userName+"] "+reponse);
+                    toAll("["+userName+"]: "+reponse);
                
                // toAll(String.valueOf(connectionArray.size()+1));
                 
@@ -57,7 +62,8 @@ public class ClientHandler implements Runnable {
             String userN = this.userName;
             connectionArray.remove(this);
             System.out.println(userN + " is disconnected!");
-            toAll(userN + " is disconnected!");
+            userArray.remove(userN);
+            toAll("[server]:"+userN + " is disconnected!");
          //   try {
              //   checkConnection();
         //    } catch (IOException ex) {

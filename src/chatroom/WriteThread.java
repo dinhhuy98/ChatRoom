@@ -10,6 +10,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,10 +21,12 @@ class WriteThread extends Thread{
     private BufferedReader reader;
     private DataOutputStream out;
     private Socket socket;
-    private ChatClient client;
-    public WriteThread(Socket socket, ChatClient client) {
+    private ChatClientGUI clientGUI;
+    private String userName;
+    public WriteThread(Socket socket, ChatClientGUI clientGUI, String userName) {
         this.socket = socket;
-        this.client = client;
+        this.clientGUI = clientGUI;
+        this.userName=userName;
         try{
             reader = new BufferedReader(new InputStreamReader(System.in));
             out = new DataOutputStream(socket.getOutputStream());
@@ -33,15 +37,24 @@ class WriteThread extends Thread{
     public void run(){
         
             try{
-                out.writeUTF(client.getUserName());
+                out.writeUTF(this.userName);
                 while(true){
-                    String mess = reader.readLine();
+                   // String mess = reader.readLine();
+                    String mess = clientGUI.getInputTA().getText();
+                   // clientGUI.getMessageTA().append(mess+"\n");
                     out.writeUTF(mess);
                 }
             }catch(IOException e){
                 e.printStackTrace();
             }
         
+    }
+    public void write(String mess){
+        try {
+            out.writeUTF(mess);
+        } catch (IOException ex) {
+            Logger.getLogger(WriteThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     

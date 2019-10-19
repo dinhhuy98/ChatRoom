@@ -6,16 +6,23 @@
 package chatroom;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  *
  * @author DELL
  */
 public class ChatClientGUI extends javax.swing.JFrame {
-
+    private ChatClient client;
+    private ReadThread readThread;
+    private WriteThread writeThread;
+    Socket socket;
     /**
      * Creates new form ChatClientGUI
      */
@@ -70,6 +77,11 @@ public class ChatClientGUI extends javax.swing.JFrame {
 
         disconnectB.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         disconnectB.setText("Disconect");
+        disconnectB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                disconnectBActionPerformed(evt);
+            }
+        });
 
         onlineTA.setColumns(20);
         onlineTA.setRows(5);
@@ -91,6 +103,11 @@ public class ChatClientGUI extends javax.swing.JFrame {
 
         sendB.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
         sendB.setText("Send");
+        sendB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendBActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel4.setText("Chat Room");
@@ -110,8 +127,7 @@ public class ChatClientGUI extends javax.swing.JFrame {
                                 .addComponent(sendB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -122,26 +138,24 @@ public class ChatClientGUI extends javax.swing.JFrame {
                                 .addComponent(connectB)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(disconnectB)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel1)
-                                .addGap(79, 79, 79))
+                                .addGap(78, 78, 78)
+                                .addComponent(jLabel1))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(44, 44, 44)
-                                .addComponent(jLabel4)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                .addComponent(jLabel4)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(userTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(connectB)
-                        .addComponent(disconnectB))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(userTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(connectB)
+                    .addComponent(disconnectB)
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
@@ -161,20 +175,27 @@ public class ChatClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         String userName = userTF.getText();
         if(!userName.isEmpty()){
-            ChatClient client1 = new ChatClient("localhost",1998);
-            client1.setUserName("lll");
+            client = new ChatClient("localhost",1998);
+            client.setUserName(userName);
             try {
-                client1.execute();
-            userTF.setEditable(false);
-            connectB.setEnabled(false);
-            disconnectB.setEnabled(true);
-           // messageTA.setText("");
-           // onlineTA.setText("");
-           // inputTA.setText("");
-            sendB.setEnabled(true);
-            messageTA.setEditable(false);
-            onlineTA.setEditable(false);
-            inputTA.setEditable(true);
+                socket=client.connect();
+                userTF.setEditable(false);
+                connectB.setEnabled(false);
+                disconnectB.setEnabled(true);
+               // messageTA.setText("");
+               // onlineTA.setText("");
+               // inputTA.setText("");
+                sendB.setEnabled(true);
+                messageTA.setEditable(false);
+                onlineTA.setEditable(false);
+                inputTA.setEditable(true);
+                readThread = new ReadThread(socket,this,userName);
+                readThread.start();
+                
+                writeThread = new WriteThread(socket, this, userName);
+                writeThread.write(userName);
+                messageTA.append("Connected to the chat server \n");
+            
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "Server is not running!",null,JOptionPane.ERROR_MESSAGE);
                 
@@ -184,6 +205,56 @@ public class ChatClientGUI extends javax.swing.JFrame {
         else
             JOptionPane.showMessageDialog(null, "Please input username!",null,JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_connectBActionPerformed
+
+    private void sendBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendBActionPerformed
+        // TODO add your handling code here:
+        String mess = inputTA.getText();
+        if(mess!=""){
+            writeThread.write(mess);
+            messageTA.append(mess+"\n");
+            inputTA.setText("");
+        }
+    }//GEN-LAST:event_sendBActionPerformed
+
+    private void disconnectBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectBActionPerformed
+        try {
+            // TODO add your handling code here:
+            socket.close();
+            readThread.stop();
+            writeThread.stop();
+            init();
+        } catch (IOException ex) {
+            Logger.getLogger(ChatClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_disconnectBActionPerformed
+
+    public JButton getConnectB() {
+        return connectB;
+    }
+
+    public JButton getDisconnectB() {
+        return disconnectB;
+    }
+
+    public JTextArea getInputTA() {
+        return inputTA;
+    }
+
+    public JTextArea getMessageTA() {
+        return messageTA;
+    }
+
+    public JTextArea getOnlineTA() {
+        return onlineTA;
+    }
+
+    public JButton getSendB() {
+        return sendB;
+    }
+
+    public JTextField getUserTF() {
+        return userTF;
+    }
 
     /**
      * @param args the command line arguments
