@@ -7,6 +7,7 @@ package chatroom;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -84,6 +85,8 @@ public class ChatClientGUI extends javax.swing.JFrame {
         });
 
         onlineTA.setColumns(20);
+        onlineTA.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        onlineTA.setLineWrap(true);
         onlineTA.setRows(5);
         jScrollPane1.setViewportView(onlineTA);
 
@@ -94,6 +97,8 @@ public class ChatClientGUI extends javax.swing.JFrame {
         jLabel2.setText("Username:");
 
         messageTA.setColumns(20);
+        messageTA.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
+        messageTA.setLineWrap(true);
         messageTA.setRows(5);
         jScrollPane2.setViewportView(messageTA);
 
@@ -303,6 +308,12 @@ public class ChatClientGUI extends javax.swing.JFrame {
         inputTA.setEditable(false);
         
     }
+    public void loadOnlineUser(ArrayList<String> arrayUser){
+        onlineTA.setText("");
+        for(String user: arrayUser){
+            onlineTA.append(user+"\n");
+        }
+}
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

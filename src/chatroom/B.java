@@ -6,23 +6,35 @@
 package chatroom;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author DELL
  */
-public class B implements Runnable{
-       private   ArrayList<B> k;
-
-        public B(ArrayList<B> k){
-            this.k=k;
-        }
-        @Override
-        
-        public void run() {
+public class B extends Thread{
+       
+       
+        public B(){
             while(true){
-                System.out.println(k.size());
+                System.out.println(ChatRoom.b);
+                ChatRoom.add();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(B.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
-        
-}
+        public static void main(String[] args) {
+            B f = new B();
+            f.start();
+         
+            
+    }
+   }
+
+       

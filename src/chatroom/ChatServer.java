@@ -30,11 +30,16 @@ public class ChatServer {
                 Socket socket = server.accept();
                DataInputStream in = new DataInputStream(socket.getInputStream());
                String user = in.readUTF();
+               if(userArray.contains(user)){
+                   socket.close();
+               }
+               else{
                 System.out.println(user+ "connected");
                 userArray.add(user);
                 ClientHandler ch = new ClientHandler(socket,connectionArray,user,userArray);
                 connectionArray.add(ch);
                 new Thread(ch).start();
+               }
                 /*
                new Thread(()->{
                         try{

@@ -63,7 +63,7 @@ public class ClientHandler implements Runnable {
             connectionArray.remove(this);
             System.out.println(userN + " is disconnected!");
             userArray.remove(userN);
-            toAll("[server]:"+userN + " is disconnected!");
+            toAll("[server]:"+"["+userN+"]: is disconnected");
          //   try {
              //   checkConnection();
         //    } catch (IOException ex) {

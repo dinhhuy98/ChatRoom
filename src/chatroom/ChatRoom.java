@@ -12,15 +12,14 @@ import java.util.ArrayList;
  * @author DELL
  */
 public class ChatRoom {
-    
+     public static int b=4;
+      public static void add(){
+            b++;
+        }
+      public ChatRoom(){
+          b=5;
+      }
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
-         ArrayList<B> k = new ArrayList<>();
-         B p= new B(k);
-         k.add(p);
-         new Thread(p).start();
-    }
 }

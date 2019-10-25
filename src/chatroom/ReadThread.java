@@ -15,6 +15,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,6 +29,8 @@ class ReadThread extends Thread{
     private String userName;
     private ObjectInputStream inObject;
     private ChatClientGUI clientGUI;
+    ArrayList<String> userArray;
+    
     public ReadThread(Socket socket, ChatClientGUI clientGUI, String userName) {
         this.socket=socket;
         this.clientGUI=clientGUI;
@@ -39,10 +44,9 @@ class ReadThread extends Thread{
             try{
                 inObject = new ObjectInputStream(socket.getInputStream());
                 try {
-                    ArrayList<String> userArray =(ArrayList) inObject.readObject();
-                    for(String user:userArray){
-                        clientGUI.getOnlineTA().append(user+"\n");
-                    }
+                    userArray =(ArrayList) inObject.readObject();
+                    
+                    clientGUI.loadOnlineUser(userArray);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(ReadThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -50,9 +54,26 @@ class ReadThread extends Thread{
                     //clientGUI.getMessageTA().append("kkk");
                     String respone = in.readUTF();
                    
-                  //  if(respone.matches("\\[server\\]:\\[\\w{1,}\\]:\\w{1,}")){
-                        
-                  //  }
+                  if(respone.matches("\\[server\\]:\\[(.+){1,}\\]: connected")){
+                         Pattern pattern = Pattern.compile("[^server]\\[(.+?)\\]");
+                         
+                        Matcher matcher = pattern.matcher(respone);
+                        if (matcher.find())
+                            {
+                                userArray.add(matcher.group(1));
+                                clientGUI.loadOnlineUser(userArray);
+                            }
+                  }
+                  else if(respone.matches("\\[server\\]:\\[(.+){1,}\\]: is disconnected")){
+                      Pattern pattern = Pattern.compile("[^server]\\[(.+?)\\]");
+                         
+                        Matcher matcher = pattern.matcher(respone);
+                        if (matcher.find())
+                            {
+                                userArray.remove(matcher.group(1));
+                                clientGUI.loadOnlineUser(userArray);
+                            }
+                  }
                     if(respone!=null && respone!="#?connection?"){
                         System.out.println(respone);
                         clientGUI.getMessageTA().append(respone+"\n");
@@ -61,6 +82,8 @@ class ReadThread extends Thread{
                  
                 }
             }catch(IOException e){
+                JOptionPane.showMessageDialog(null, "The username is already in use!",null,JOptionPane.ERROR_MESSAGE);
+                clientGUI.init();
                 e.printStackTrace();
             }
         
